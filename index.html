@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>C++ 星际编程学院 · 费曼式边学边练</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚀</text></svg>">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header id="topbar">
+  <div class="brand">🚀 <span>C++ 星际编程学院</span></div>
+  <div class="hud">
+    <div class="hud-level"><span id="hud-level">Lv.1</span><span id="hud-title">编程新手</span></div>
+    <div class="xpbar" id="xpbar-anchor"><div id="xpfill"></div><span id="xptext">0 / 50</span></div>
+    <div class="hud-streak" title="连续学习天数">🔥 <span id="streak-n">0</span> 天</div>
+    <div class="hud-today" title="今日目标：完成 3 个学习任务">🎯 <span id="today-n">0/3</span></div>
+    <button id="btn-review" title="回溯学习：复习建议与重练入口">🔁</button>
+    <button id="btn-share" title="分享给朋友（GitHub）">📤</button>
+    <button id="btn-badges" title="徽章墙">🏅<span id="badge-n">0</span></button>
+    <button id="btn-wrong" title="错题本">📕<span id="wrong-n">0</span></button>
+    <button id="btn-sound" title="音效开关">🔊</button>
+    <button id="btn-home" title="回到星图">🏠</button>
+  </div>
+</header>
+
+<main>
+  <!-- 首页星图 -->
+  <section id="view-home">
+    <div class="hero">
+      <h1>从零开始，飞向 <em>C++ 星辰大海</em></h1>
+      <p>专为 4~11 年级、爱动手爱思考的你设计。用<b>费曼学习法</b>边学边练：学概念 → 当小老师讲给机器人听 → 动手写代码 → 章末趣味闯关。16 章循序渐进，直到指针、面向对象与 STL 算法入门。</p>
+      <div id="hero-stats"></div>
+      <button class="btn primary big" id="btn-continue">🚀 继续学习</button>
+      <button class="btn big" id="btn-review-home" style="margin-left:10px">🔁 回溯学习</button>
+      <div class="feynman-steps">
+        <span><b>①</b> 学概念</span>
+        <span><b>②</b> 当小老师</span>
+        <span><b>③</b> 动手练</span>
+        <span><b>④</b> 趣味闯关</span>
+      </div>
+    </div>
+    <div id="chapter-grid"></div>
+    <div id="epilogue-card" class="epilogue-card"></div>
+    <footer>进度自动保存在本机浏览器 · 离线可用 · <button id="btn-reset">重置全部进度</button></footer>
+  </section>
+
+  <!-- 章节视图 -->
+  <section id="view-chapter" class="hidden">
+    <div class="chapter-head">
+      <button class="btn small" id="btn-back">← 星图</button>
+      <button class="btn small" id="btn-ch-review" title="回溯学习">🔁 回溯</button>
+      <h2 id="ch-title"></h2>
+      <div id="ch-progress"></div>
+    </div>
+    <p id="ch-intro"></p>
+    <div class="flow-label">① 学一学 · 概念卡</div>
+    <div id="concept-list"></div>
+    <div class="flow-label">② 讲一讲 · 费曼小老师</div>
+    <div id="feynman-box"></div>
+    <div class="flow-label">③ 练一练 · 动手编程</div>
+    <div id="task-list"></div>
+    <div class="flow-label">④ 闯一闯 · 章末考验</div>
+    <div id="challenge-box"></div>
+    <div id="ch-next"></div>
+  </section>
+</main>
+
+<!-- 伴学机器人 -->
+<div id="robot-dock"></div>
+
+<!-- 代码编辑器 -->
+<div id="editor-modal" class="modal hidden">
+  <div class="editor-panel">
+    <div class="editor-head">
+      <div><h3 id="ed-title"></h3><div id="ed-story"></div></div>
+      <button id="ed-close" title="关闭">✕</button>
+    </div>
+    <div id="ed-goal" class="goal-box"></div>
+    <div class="editor-main">
+      <div class="editor-left">
+        <div class="editor-toolbar"><span>📝 代码编辑器（自动保存）</span><span class="kbd-hint">Ctrl + Enter 运行</span></div>
+        <div class="editor-wrap">
+          <pre id="ed-hl" aria-hidden="true"></pre>
+          <textarea id="ed-code" spellcheck="false" autocomplete="off" autocapitalize="off"></textarea>
+        </div>
+        <div class="input-row">
+          <label>⌨️ 输入数据（cin 从这里读取；提交评测时自动使用各测试点的输入）</label>
+          <textarea id="ed-input" rows="2" spellcheck="false"></textarea>
+        </div>
+        <div class="editor-actions">
+          <button id="ed-run" class="btn primary">▶ 运行</button>
+          <button id="ed-submit" class="btn success">🚀 提交评测</button>
+          <button id="ed-hint" class="btn">💡 提示</button>
+          <button id="ed-solution" class="btn hidden">📖 参考答案</button>
+          <button id="ed-reset" class="btn ghost">↺ 重置代码</button>
+        </div>
+        <div id="ed-hints" class="hints-box hidden"></div>
+      </div>
+      <div class="editor-right">
+        <div class="console-head">🖥️ 输出控制台</div>
+        <pre id="ed-output" class="console"></pre>
+        <div id="ed-tests" class="tests-box"></div>
+        <div id="ed-verdict"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 徽章墙 -->
+<div id="badges-modal" class="modal hidden">
+  <div class="panel">
+    <h3>🏅 徽章墙</h3>
+    <p>每一枚徽章都是你学习旅程的里程碑。集齐 16 枚，成为传奇！</p>
+    <div id="badge-grid"></div>
+    <button class="btn" data-close>关闭</button>
+  </div>
+</div>
+
+<!-- 错题本 -->
+<div id="wrong-modal" class="modal hidden">
+  <div class="panel">
+    <h3>📕 错题本</h3>
+    <p>失败 2 次以上的题目会自动记在这里。订正 3 道即可获得「错题克星」徽章——错题是最好的老师！</p>
+    <div id="wrong-list"></div>
+    <button class="btn" data-close>关闭</button>
+  </div>
+</div>
+
+<!-- 升级动画 -->
+<div id="levelup-overlay" class="hidden">
+  <div class="levelup-card">
+    <div class="rays"></div>
+    <div class="lv-big">✨ LEVEL UP ✨</div>
+    <div id="lv-num"></div>
+    <div id="lv-title"></div>
+    <div class="lv-hint">点击任意处继续</div>
+  </div>
+</div>
+
+<!-- 徽章解锁吐司 / XP 飘字 -->
+<div id="badge-toasts"></div>
+<div id="xp-floats"></div>
+
+<!-- 新手引导 -->
+<div id="onboarding" class="modal hidden">
+  <div class="ob-card">
+    <h2>🚀 欢迎来到 C++ 星际编程学院！</h2>
+    <p>这里用<b>费曼学习法</b>带你从零基础飞到 C++ 深处：每章先学概念，再<b>用自己的话讲给机器人听</b>，然后动手练习，最后挑战趣味闯关。<br>先给自己起个代号，再选一位伴学机器人吧！</p>
+    <input id="ob-name" maxlength="12" placeholder="你的代号（如：小星）">
+    <div id="robot-choices"></div>
+    <button class="btn primary big" id="ob-start" disabled>🛸 出发！</button>
+  </div>
+</div>
+
+<!-- 回溯学习 -->
+<div id="review-modal" class="modal hidden">
+  <div class="panel">
+    <h3>🔁 回溯学习</h3>
+    <p>费曼 + 艾宾浩斯：学过的内容在 3 天 / 7 天后回溯一次，记忆最牢固。下面有机器人的复习建议，也可以随时重读任何一章。</p>
+    <div id="review-body"></div>
+    <button class="btn" data-close>关闭</button>
+  </div>
+</div>
+
+<!-- GitHub 分享 -->
+<div id="share-modal" class="modal hidden">
+  <div class="panel">
+    <h3>📤 分享给朋友</h3>
+    <div id="share-body"></div>
+    <button class="btn" data-close>关闭</button>
+  </div>
+</div>
+
+<!-- 毕业寄语 -->
+<div id="epilogue-modal" class="modal hidden">
+  <div class="panel">
+    <h3>🎓 毕业寄语</h3>
+    <div id="epilogue-body"></div>
+    <button class="btn primary" data-close>返回星图</button>
+  </div>
+</div>
+
+<!-- 重置确认 -->
+<div id="confirm-modal" class="modal hidden">
+  <div class="panel">
+    <h3>⚠️ 重置全部进度？</h3>
+    <p>经验、等级、徽章、闯关记录、错题本都会清空，无法恢复。确定要重新开始吗？</p>
+    <div class="confirm-actions">
+      <button class="btn" id="confirm-no">取消</button>
+      <button class="btn danger" id="confirm-yes">确定重置</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/interpreter.js"></script>
+<script src="js/curriculum.js"></script>
+<script src="js/gamification.js"></script>
+<script src="js/robot.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
